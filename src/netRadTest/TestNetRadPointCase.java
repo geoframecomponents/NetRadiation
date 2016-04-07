@@ -47,13 +47,15 @@ public class TestNetRadPointCase extends HMTestCase {
 		int timeStepMinutes = 60;
 		String fId = "ID";
 
-		String inPathToSWRB ="resources/Input/DIRETTA.csv";
+		String inPathToDirectSWRB ="resources/Input/DIRETTA.csv";
+		String inPathToDiffuseSWRB ="resources/Input/DIFFUSA.csv";
 		String inPathToDownwelling ="resources/Input/down.csv";
 		String inPathToUpwelling ="resources/Input/up.csv";
 		String pathToNet= "resources/Output/NetRad.csv";
 
 
-		OmsTimeSeriesIteratorReader SWRBreader = getTimeseriesReader(inPathToSWRB, fId, startDate, endDate, timeStepMinutes);
+		OmsTimeSeriesIteratorReader DirectSWRBreader = getTimeseriesReader(inPathToDirectSWRB, fId, startDate, endDate, timeStepMinutes);
+		OmsTimeSeriesIteratorReader DiffuseSWRBreader = getTimeseriesReader(inPathToDiffuseSWRB, fId, startDate, endDate, timeStepMinutes);
 		OmsTimeSeriesIteratorReader DownReader = getTimeseriesReader(inPathToDownwelling, fId, startDate, endDate, timeStepMinutes);
 		OmsTimeSeriesIteratorReader UpReader = getTimeseriesReader(inPathToUpwelling, fId, startDate, endDate, timeStepMinutes);
 
@@ -82,12 +84,18 @@ public class TestNetRadPointCase extends HMTestCase {
 		netRad.fStationsid = "cat" ;
 		netRad.alfa=0;
 
-		while( SWRBreader.doProcess  ) { 
+		while( DirectSWRBreader.doProcess  ) { 
 
 	
-			SWRBreader.nextRecord();	
-			HashMap<Integer, double[]> id2ValueMap = SWRBreader.outData;
-			netRad.inShortwaveValues= id2ValueMap;
+			DirectSWRBreader.nextRecord();	
+			HashMap<Integer, double[]> id2ValueMap = DirectSWRBreader.outData;
+			netRad.inShortwaveDirectValues= id2ValueMap;
+			
+
+			DiffuseSWRBreader.nextRecord();
+			id2ValueMap = DiffuseSWRBreader.outData;
+			netRad.inShortwaveDiffuseValues = id2ValueMap;
+			
 
 			DownReader.nextRecord();
 			id2ValueMap = DownReader.outData;
@@ -119,7 +127,8 @@ public class TestNetRadPointCase extends HMTestCase {
 		}
 		
 
-		SWRBreader.close();
+		DirectSWRBreader.close();
+		DiffuseSWRBreader.close();
 		DownReader.close();
 		UpReader.close();
 

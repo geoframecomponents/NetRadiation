@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import static org.jgrasstools.gears.libs.modules.JGTConstants.isNovalue;
+import static org.jgrasstools.gears.libs.modules.JGTConstants.doubleNovalue;
+
 import oms3.annotations.Description;
 import oms3.annotations.Execute;
 import oms3.annotations.In;
@@ -21,10 +24,15 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class NetRadiation extends JGTModel {
 
-	@Description("The Hashmap with the time series of the Shortwave values")
+	@Description("The Hashmap with the time series of the direct shortwave radiation values")
 	@In
 	@Unit ("W/m2")
-	public HashMap<Integer, double[]> inShortwaveValues;
+	public HashMap<Integer, double[]> inShortwaveDirectValues;
+	
+	@Description("The Hashmap with the time series of the diffuse shortwave radiation values")
+	@In
+	@Unit ("W/m2")
+	public HashMap<Integer, double[]> inShortwaveDiffuseValues;
 
 	@Description("The Hashmap with the time series of the Downwelling values")
 	@In
@@ -86,13 +94,15 @@ public class NetRadiation extends JGTModel {
 		// iterate over the list of the stations
 		for (int i=0;i<idStations.length;i++){
 
-			double shortwave=inShortwaveValues.get(idStations[i])[0];
+			double direct=inShortwaveDirectValues.get(idStations[i])[0];
 			
-			double downwelling=inShortwaveValues.get(idStations[i])[0];
+			double diffuse=inShortwaveDiffuseValues.get(idStations[i])[0];
 			
-			double upwelling=inShortwaveValues.get(idStations[i])[0];
+			double downwelling = inDownwellingValues.get(idStations[i])[0];
 			
-			double netRad=(1-alfa)*shortwave+downwelling-upwelling;
+			double upwelling=inUpwellingValues.get(idStations[i])[0];
+			
+			double netRad=(direct<=0)?0:(1-alfa)*(direct+diffuse)+downwelling-upwelling;
 			
 			/**Store results in Hashmaps*/
 			storeResult((Integer)idStations[i],netRad);
