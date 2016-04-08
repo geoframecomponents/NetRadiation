@@ -95,14 +95,19 @@ public class NetRadiation extends JGTModel {
 		for (int i=0;i<idStations.length;i++){
 
 			double direct=inShortwaveDirectValues.get(idStations[i])[0];
+			if(direct<0) direct=0;
 			
 			double diffuse=inShortwaveDiffuseValues.get(idStations[i])[0];
+			if(diffuse<0) diffuse=0;
 			
 			double downwelling = inDownwellingValues.get(idStations[i])[0];
+			if(downwelling<0) downwelling=0;
 			
 			double upwelling=inUpwellingValues.get(idStations[i])[0];
+			if(upwelling<0) upwelling=0;
 			
 			double netRad=(direct<=0)?0:(1-alfa)*(direct+diffuse)+downwelling-upwelling;
+			netRad=(netRad<0)?0:netRad;
 			
 			/**Store results in Hashmaps*/
 			storeResult((Integer)idStations[i],netRad);

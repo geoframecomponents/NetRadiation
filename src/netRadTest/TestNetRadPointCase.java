@@ -43,14 +43,14 @@ public class TestNetRadPointCase extends HMTestCase {
 
 
 		String startDate = "2004-06-14 00:00" ;
-		String endDate = "2004-06-15 00:00";
+		String endDate = "2005-01-01 00:00";
 		int timeStepMinutes = 60;
 		String fId = "ID";
 
 		String inPathToDirectSWRB ="resources/Input/DIRETTA.csv";
 		String inPathToDiffuseSWRB ="resources/Input/DIFFUSA.csv";
-		String inPathToDownwelling ="resources/Input/down.csv";
-		String inPathToUpwelling ="resources/Input/up.csv";
+		String inPathToDownwelling ="resources/Input/downwelling.csv";
+		String inPathToUpwelling ="resources/Input/upwelling.csv";
 		String pathToNet= "resources/Output/NetRad.csv";
 
 
