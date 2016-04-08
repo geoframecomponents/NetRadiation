@@ -60,12 +60,6 @@ public class TestNetRadPointCase extends HMTestCase {
 		OmsTimeSeriesIteratorReader UpReader = getTimeseriesReader(inPathToUpwelling, fId, startDate, endDate, timeStepMinutes);
 
 
-		
-		OmsShapefileFeatureReader stationsReader = new OmsShapefileFeatureReader();
-		stationsReader.file = "resources/Input/stations.shp";
-		stationsReader.readFeatureCollection();
-		SimpleFeatureCollection stationsFC = stationsReader.geodata;
-
 
 
 		OmsTimeSeriesIteratorWriter writerNetRad = new OmsTimeSeriesIteratorWriter();
@@ -80,8 +74,6 @@ public class TestNetRadPointCase extends HMTestCase {
 		 
 
 		NetRadiation netRad = new NetRadiation();
-		netRad.inStations = stationsFC;
-		netRad.fStationsid = "cat" ;
 		netRad.alfa=0;
 
 		while( DirectSWRBreader.doProcess  ) { 

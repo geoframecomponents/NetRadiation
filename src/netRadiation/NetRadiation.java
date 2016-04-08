@@ -3,9 +3,8 @@ package netRadiation;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
+import java.util.Map.Entry;
 
-import static org.jgrasstools.gears.libs.modules.JGTConstants.isNovalue;
-import static org.jgrasstools.gears.libs.modules.JGTConstants.doubleNovalue;
 
 import oms3.annotations.Description;
 import oms3.annotations.Execute;
@@ -13,14 +12,12 @@ import oms3.annotations.In;
 import oms3.annotations.Out;
 import oms3.annotations.Unit;
 
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.feature.FeatureIterator;
+
 import org.geotools.feature.SchemaException;
 import org.jgrasstools.gears.libs.modules.JGTModel;
-import org.opengis.feature.simple.SimpleFeature;
+
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
 
 public class NetRadiation extends JGTModel {
 
@@ -50,18 +47,6 @@ public class NetRadiation extends JGTModel {
 	@Unit ("-")
 	public double alfa;
 
-
-	@Description("The shape file with the station measuremnts")
-	@In
-	public SimpleFeatureCollection inStations;
-
-	@Description("The name of the field containing the ID of the station in the shape file")
-	@In
-	public String fStationsid;
-
-	@Description(" The vetor containing the id of the station")
-	Object []idStations;
-
 	@Description("the linked HashMap with the coordinate of the stations")
 	LinkedHashMap<Integer, Coordinate> stationCoordinates;
 
@@ -77,72 +62,38 @@ public class NetRadiation extends JGTModel {
 	@Execute
 	public void process() throws Exception { 
 
-
-		// starting from the shp file containing the stations, get the coordinate
-		//of each station
-		stationCoordinates = getCoordinate(inStations, fStationsid);
-
-		//create the set of the coordinate of the station, so we can 
-		//iterate over the set
-		Set<Integer> stationCoordinatesIdSet = stationCoordinates.keySet();
+		checkNull(inShortwaveDirectValues);
 
 
-		// trasform the list of idStation into an array
-		idStations= stationCoordinatesIdSet.toArray();
+		// reading the ID of all the stations 
+		Set<Entry<Integer, double[]>> entrySet = inShortwaveDirectValues.entrySet();
 
+		for (Entry<Integer, double[]> entry : entrySet) {
+			Integer ID = entry.getKey();
 
-		// iterate over the list of the stations
-		for (int i=0;i<idStations.length;i++){
-
-			double direct=inShortwaveDirectValues.get(idStations[i])[0];
+			double direct=inShortwaveDirectValues.get(ID)[0];
 			if(direct<0) direct=0;
 			
-			double diffuse=inShortwaveDiffuseValues.get(idStations[i])[0];
+			double diffuse=inShortwaveDiffuseValues.get(ID)[0];
 			if(diffuse<0) diffuse=0;
 			
-			double downwelling = inDownwellingValues.get(idStations[i])[0];
+			double downwelling = inDownwellingValues.get(ID)[0];
 			if(downwelling<0) downwelling=0;
 			
-			double upwelling=inUpwellingValues.get(idStations[i])[0];
+			double upwelling=inUpwellingValues.get(ID)[0];
 			if(upwelling<0) upwelling=0;
 			
 			double netRad=(direct<=0)?0:(1-alfa)*(direct+diffuse)+downwelling-upwelling;
 			netRad=(netRad<0)?0:netRad;
 			
 			/**Store results in Hashmaps*/
-			storeResult((Integer)idStations[i],netRad);
+			storeResult((Integer)ID,netRad);
 
 		}
 
 
 		}
 
-		/**
-		 * Gets the coordinate given the shp file and the field name in the shape with the coordinate of the station.
-		 *
-		 * @param collection is the shp file with the stations
-		 * @param idField is the name of the field with the id of the stations 
-		 * @return the coordinate of each station
-		 * @throws Exception the exception in a linked hash map
-		 */
-		private LinkedHashMap<Integer, Coordinate> getCoordinate(SimpleFeatureCollection collection, String idField)
-				throws Exception {
-			LinkedHashMap<Integer, Coordinate> id2CoordinatesMap = new LinkedHashMap<Integer, Coordinate>();
-			FeatureIterator<SimpleFeature> iterator = collection.features();
-			Coordinate coordinate = null;
-			try {
-				while (iterator.hasNext()) {
-					SimpleFeature feature = iterator.next();
-					int stationNumber = ((Number) feature.getAttribute(idField)).intValue();
-					coordinate = ((Geometry) feature.getDefaultGeometry()).getCentroid().getCoordinate();
-					id2CoordinatesMap.put(stationNumber, coordinate);
-				}
-			} finally {
-				iterator.close();
-			}
-
-			return id2CoordinatesMap;
-		}
 
 
 		/**
