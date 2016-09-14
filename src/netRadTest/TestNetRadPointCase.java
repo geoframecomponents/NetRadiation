@@ -47,15 +47,13 @@ public class TestNetRadPointCase extends HMTestCase {
 		int timeStepMinutes = 60;
 		String fId = "ID";
 
-		String inPathToDirectSWRB ="resources/Input/DIRETTA.csv";
-		String inPathToDiffuseSWRB ="resources/Input/DIFFUSA.csv";
+		String inPathToSWRB ="resources/Input/DIRETTA.csv";
 		String inPathToDownwelling ="resources/Input/downwelling.csv";
 		String inPathToUpwelling ="resources/Input/upwelling.csv";
 		String pathToNet= "resources/Output/NetRad.csv";
 
 
-		OmsTimeSeriesIteratorReader DirectSWRBreader = getTimeseriesReader(inPathToDirectSWRB, fId, startDate, endDate, timeStepMinutes);
-		OmsTimeSeriesIteratorReader DiffuseSWRBreader = getTimeseriesReader(inPathToDiffuseSWRB, fId, startDate, endDate, timeStepMinutes);
+		OmsTimeSeriesIteratorReader DirectSWRBreader = getTimeseriesReader(inPathToSWRB, fId, startDate, endDate, timeStepMinutes);
 		OmsTimeSeriesIteratorReader DownReader = getTimeseriesReader(inPathToDownwelling, fId, startDate, endDate, timeStepMinutes);
 		OmsTimeSeriesIteratorReader UpReader = getTimeseriesReader(inPathToUpwelling, fId, startDate, endDate, timeStepMinutes);
 
@@ -81,12 +79,8 @@ public class TestNetRadPointCase extends HMTestCase {
 	
 			DirectSWRBreader.nextRecord();	
 			HashMap<Integer, double[]> id2ValueMap = DirectSWRBreader.outData;
-			netRad.inShortwaveDirectValues= id2ValueMap;
-			
+			netRad.inShortwaveValues= id2ValueMap;
 
-			DiffuseSWRBreader.nextRecord();
-			id2ValueMap = DiffuseSWRBreader.outData;
-			netRad.inShortwaveDiffuseValues = id2ValueMap;
 			
 
 			DownReader.nextRecord();
@@ -120,7 +114,6 @@ public class TestNetRadPointCase extends HMTestCase {
 		
 
 		DirectSWRBreader.close();
-		DiffuseSWRBreader.close();
 		DownReader.close();
 		UpReader.close();
 

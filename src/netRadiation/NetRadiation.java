@@ -21,15 +21,11 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 public class NetRadiation extends JGTModel {
 
-	@Description("The Hashmap with the time series of the direct shortwave radiation values")
+	@Description("The Hashmap with the time series of the shortwave radiation values")
 	@In
 	@Unit ("W/m2")
-	public HashMap<Integer, double[]> inShortwaveDirectValues;
+	public HashMap<Integer, double[]> inShortwaveValues;
 	
-	@Description("The Hashmap with the time series of the diffuse shortwave radiation values")
-	@In
-	@Unit ("W/m2")
-	public HashMap<Integer, double[]> inShortwaveDiffuseValues;
 
 	@Description("The Hashmap with the time series of the Downwelling values")
 	@In
@@ -62,20 +58,17 @@ public class NetRadiation extends JGTModel {
 	@Execute
 	public void process() throws Exception { 
 
-		checkNull(inShortwaveDirectValues);
+		checkNull(inShortwaveValues);
 
 
 		// reading the ID of all the stations 
-		Set<Entry<Integer, double[]>> entrySet = inShortwaveDirectValues.entrySet();
+		Set<Entry<Integer, double[]>> entrySet = inShortwaveValues.entrySet();
 
 		for (Entry<Integer, double[]> entry : entrySet) {
 			Integer ID = entry.getKey();
 
-			double direct=inShortwaveDirectValues.get(ID)[0];
-			if(direct<0) direct=0;
-			
-			double diffuse=inShortwaveDiffuseValues.get(ID)[0];
-			if(diffuse<0) diffuse=0;
+			double shortWave=inShortwaveValues.get(ID)[0];
+			if(shortWave<0) shortWave=0;
 			
 			double downwelling = inDownwellingValues.get(ID)[0];
 			if(downwelling<0) downwelling=0;
@@ -83,7 +76,7 @@ public class NetRadiation extends JGTModel {
 			double upwelling=inUpwellingValues.get(ID)[0];
 			if(upwelling<0) upwelling=0;
 			
-			double netRad=(direct<=0)?0:(1-alfa)*(direct+diffuse)+downwelling-upwelling;
+			double netRad=(shortWave<=0)?0:(1-alfa)*(shortWave)+downwelling-upwelling;
 			netRad=(netRad<0)?0:netRad;
 			
 			/**Store results in Hashmaps*/
