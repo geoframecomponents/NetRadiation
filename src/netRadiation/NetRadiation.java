@@ -25,7 +25,7 @@ public class NetRadiation extends JGTModel {
 	@In
 	@Unit ("W/m2")
 	public HashMap<Integer, double[]> inShortwaveValues;
-	
+
 
 	@Description("The Hashmap with the time series of the Downwelling values")
 	@In
@@ -69,39 +69,39 @@ public class NetRadiation extends JGTModel {
 
 			double shortWave=inShortwaveValues.get(ID)[0];
 			if(shortWave<0) shortWave=0;
-			
+
 			double downwelling = inDownwellingValues.get(ID)[0];
 			if(downwelling<0) downwelling=0;
-			
+
 			double upwelling=inUpwellingValues.get(ID)[0];
 			if(upwelling<0) upwelling=0;
-			
+
 			double netRad=(shortWave<=0)?0:(1-alfa)*(shortWave)+downwelling-upwelling;
 			netRad=(netRad<0)?0:netRad;
-			
+
 			/**Store results in Hashmaps*/
 			storeResult((Integer)ID,netRad);
 
 		}
 
 
-		}
+	}
 
 
 
-		/**
-		 * Store result in given hashpmaps.
-		 *
-		 * @param downwellingALLSKY: the downwelling radiation in all sky conditions
-		 * @param upwelling: the upwelling radiation
-		 * @param longwave: the longwave radiation
-		 * @throws SchemaException 
-		 */
-		private void storeResult(Integer ID,double netRad) 
-				throws SchemaException {
+	/**
+	 * Store result in given hashpmaps.
+	 *
+	 * @param downwellingALLSKY: the downwelling radiation in all sky conditions
+	 * @param upwelling: the upwelling radiation
+	 * @param longwave: the longwave radiation
+	 * @throws SchemaException 
+	 */
+	private void storeResult(Integer ID,double netRad) 
+			throws SchemaException {
 
-			outHMnetRad.put(ID, new double[]{netRad});
-
-		}
+		outHMnetRad.put(ID, new double[]{netRad});
 
 	}
+
+}
