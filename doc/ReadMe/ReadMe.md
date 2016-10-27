@@ -1,4 +1,4 @@
-# Krigings
+# NetRadiation
 
 `@author` Marialaura Bancheri
 
