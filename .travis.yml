@@ -1,0 +1,27 @@
+language: java
+jdk:
+- oraclejdk8
+before_cache:
+- rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+before_deploy:
+- export GRADLE_BUILD_DIR="build/libs"
+- export TAG=$(git describe --abbrev=0 --tags)
+- export MOD_TAG=${TAG#"v"}
+- export RELEASE_PKG_FILE="${GRADLE_BUILD_DIR}/NetRadiation-${MOD_TAG}.jar"
+- echo "deploying $RELEASE_PKG_FILE to GitHub releases"
+- gradle -PprojVersion=$MOD_TAG build
+deploy:
+  provider: releases
+  api_key:
+    secure: p4pqNb/xUsSWtHOy1kN85ra3x/VrFSwyzA5haaaJs7upYh+SActmGbv7vskDPJi8XO5KYIzW18uCAk2mrttdeMMMsPslvYPfA1zP1Igvevb5gzwn1XBbOWrXkyWuZV9wGqbHOZHmpigkaU477/IjmygEAYENYpW8/XYe1dgN8Lp1KOLk32JVqTb2OBfGcOBmQUBQ/5Fqo+SIxj3/NaOekzuF8ryR1a3djphKDVrqHPtCrE9XTCH40GhyCZK9sZn+rD1JFQwQWjMhSjGDCVEDqdc6GM4/PFDOjrFNUSaJH4TWtX1x/acs/RHU0n9jR0GuM881e5GFF//oZFnRAGi707fQs5YO8GuVhnwi7neSF/tko5edxdQT7SALGB5qWvTlOqSrIwZM0RtoJsL1N1ZoxnmQKJj2pGSKbx4h3poiYh0aXYuz+ZgECG/mW+/ZyR4LimvCrwzj5sQU/Ck4gJdV9v4WqCv2P8iKcX39ahxPC+B68/qCoXN29M1pUHtSyHJW3yNmx0gN0iSTQ8VEFxyrtcyWs/bZaQjofEeZNIuI0GjsrVj/KQixaWlJuv8Zxx49YWPejwPDjNbJOfpOfU/b1LapNmjBjhLrg5EDiwdZn0gS/t/GSuCJPkI1ke8ZBw7MeCYZrnCmbv8KaHNRB0tQbjDBciiqQ+RuJxImPsF7y4c=
+  file: "${RELEASE_PKG_FILE}"
+  skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true
+    repo: geoframecomponents/NetRadiation
