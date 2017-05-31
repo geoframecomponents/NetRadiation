@@ -19,12 +19,14 @@ import org.jgrasstools.gears.libs.modules.JGTModel;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-public class NetRadiation extends JGTModel {
+public class NetRadiationPointCase extends JGTModel {
 
 	@Description("The Hashmap with the time series of the shortwave radiation values")
 	@In
 	@Unit ("W/m2")
 	public HashMap<Integer, double[]> inShortwaveValues;
+	
+
 
 
 	@Description("The Hashmap with the time series of the Downwelling values")
@@ -69,7 +71,7 @@ public class NetRadiation extends JGTModel {
 
 			double shortWave=inShortwaveValues.get(ID)[0];
 			if(shortWave<0) shortWave=0;
-
+			
 			double downwelling = inDownwellingValues.get(ID)[0];
 			if(downwelling<0) downwelling=0;
 
